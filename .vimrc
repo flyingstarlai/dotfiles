@@ -34,6 +34,7 @@ call plug#begin(expand('~/.vim/plugged'))
 Plug 'scrooloose/nerdtree'
 Plug 'jistr/vim-nerdtree-tabs'
 Plug 'tpope/vim-commentary'
+Plug 'easymotion/vim-easymotion'
 Plug 'tpope/vim-fugitive'
 Plug 'vim-airline/vim-airline'
 Plug 'vim-airline/vim-airline-themes'
@@ -91,9 +92,14 @@ Plug 'mattn/emmet-vim'
 
 " javascript
 "" Javascript Bundle
-Plug 'jelera/vim-javascript-syntax'
+"" Plug 'jelera/vim-javascript-syntax'
+Plug 'pangloss/vim-javascript'
+Plug 'mxw/vim-jsx'
 Plug 'mtscout6/syntastic-local-eslint.vim'
+Plug 'trkw/yarn.vim'
 
+" React code snippets
+Plug 'epilande/vim-react-snippets'
 
 "*****************************************************************************
 "*****************************************************************************
@@ -165,6 +171,9 @@ let g:session_command_aliases = 1
 syntax on
 set ruler
 set number
+set relativenumber
+set background=dark
+set term=screen-256color
 
 let no_buffers_menu=1
 if !exists('g:not_finish_vimplug')
@@ -269,7 +278,7 @@ nnoremap <silent> <F2> :NERDTreeFind<CR>
 nnoremap <silent> <F3> :NERDTreeToggle<CR>
 
 " grep.vim
-nnoremap <silent> <leader>f :Rgrep<CR>
+nnoremap <silent> <leader>F :Rgrep<CR>
 let Grep_Default_Options = '-IR'
 let Grep_Skip_Files = '*.log *.db'
 let Grep_Skip_Dirs = '.git node_modules'
@@ -280,20 +289,20 @@ let g:vimshell_prompt =  '$ '
 
 " terminal emulation
 if g:vim_bootstrap_editor == 'nvim'
-  nnoremap <silent> <leader>sh :terminal<CR>
+nnoremap <silent> <leader>sh :terminal<CR>
 else
-  nnoremap <silent> <leader>sh :VimShellCreate<CR>
+nnoremap <silent> <leader>sh :VimShellCreate<CR>
 endif
 
 "*****************************************************************************
 "" Functions
 "*****************************************************************************
 if !exists('*s:setupWrapping')
-  function s:setupWrapping()
-    set wrap
-    set wm=2
-    set textwidth=79
-  endfunction
+function s:setupWrapping()
+set wrap
+set wm=2
+set textwidth=79
+endfunction
 endif
 
 "*****************************************************************************
@@ -301,27 +310,27 @@ endif
 "*****************************************************************************
 "" The PC is fast enough, do syntax highlight syncing from start unless 200 lines
 augroup vimrc-sync-fromstart
-  autocmd!
-  autocmd BufEnter * :syntax sync maxlines=200
+autocmd!
+autocmd BufEnter * :syntax sync maxlines=200
 augroup END
 
 "" Remember cursor position
 augroup vimrc-remember-cursor-position
-  autocmd!
-  autocmd BufReadPost * if line("'\"") > 1 && line("'\"") <= line("$") | exe "normal! g`\"" | endif
+autocmd!
+autocmd BufReadPost * if line("'\"") > 1 && line("'\"") <= line("$") | exe "normal! g`\"" | endif
 augroup END
 
 "" txt
 augroup vimrc-wrapping
-  autocmd!
-  autocmd BufRead,BufNewFile *.txt call s:setupWrapping()
+autocmd!
+autocmd BufRead,BufNewFile *.txt call s:setupWrapping()
 augroup END
 
 "" make/cmake
 augroup vimrc-make-cmake
-  autocmd!
-  autocmd FileType make setlocal noexpandtab
-  autocmd BufNewFile,BufRead CMakeLists.txt setlocal filetype=cmake
+autocmd!
+autocmd FileType make setlocal noexpandtab
+autocmd BufNewFile,BufRead CMakeLists.txt setlocal filetype=cmake
 augroup END
 
 set autoread
@@ -333,6 +342,19 @@ set autoread
 "" Split
 noremap <Leader>h :<C-u>split<CR>
 noremap <Leader>v :<C-u>vsplit<CR>
+
+"" Easy Motion
+" <Leader>f{char} to move to {char}
+map  <Leader>f <Plug>(easymotion-bd-f)
+nmap <Leader>f <Plug>(easymotion-overwin-f)
+
+" Move to line
+map <Leader>L <Plug>(easymotion-bd-jk)
+nmap <Leader>L <Plug>(easymotion-overwin-line)
+
+" Move to word
+map  <Leader>w <Plug>(easymotion-bd-w)
+nmap <Leader>w <Plug>(easymotion-overwin-w)
 
 "" Git
 noremap <Leader>ga :Gwrite<CR>
@@ -387,9 +409,9 @@ nnoremap <silent> <leader>b :Buffers<CR>
 nnoremap <silent> <leader>e :FZF -m<CR>
 
 " snippets
-let g:UltiSnipsExpandTrigger="<tab>"
-let g:UltiSnipsJumpForwardTrigger="<tab>"
-let g:UltiSnipsJumpBackwardTrigger="<c-b>"
+let g:UltiSnipsExpandTrigger="<c-l>"
+let g:UltiSnipsJumpForwardTrigger="<c-l>"
+let g:UltiSnipsJumpBackwardTrigger="<s-l>"
 let g:UltiSnipsEditSplit="vertical"
 
 " syntastic
@@ -433,9 +455,9 @@ endif
 
 "" Buffer nav
 noremap <leader>z :bp<CR>
-noremap <leader>q :bp<CR>
+" noremap <leader>q :bp<CR>
 noremap <leader>x :bn<CR>
-noremap <leader>w :bn<CR>
+" noremap <leader>w :bn<CR>
 
 "" Close buffer
 noremap <leader>c :bd<CR>
@@ -467,15 +489,30 @@ nnoremap <Leader>o :.Gbrowse<CR>
 " html
 " for html files, 2 spaces
 autocmd Filetype html setlocal ts=2 sw=2 expandtab
+let g:user_emmet_leader_key='<c-k>'
+let g:user_emmet_settings = {
+  \  'javascript.jsx' : {
+    \      'extends' : 'js',
+    \  },
+  \}
 
 
 " javascript
 let g:javascript_enable_domhtmlcss = 1
+" pangloss vim-javascript
+
+" vim-jsx
+let g:jsx_ext_required = 0
+
+augroup javascript_folding
+    au!
+    au FileType javascript setlocal foldmethod=syntax
+augroup END
 
 " vim-javascript
 augroup vimrc-javascript
   autocmd!
-  autocmd FileType javascript setl tabstop=4|setl shiftwidth=4|setl expandtab softtabstop=4
+  autocmd FileType javascript setl tabstop=2|setl shiftwidth=2|setl expandtab softtabstop=2
 augroup END
 
 
