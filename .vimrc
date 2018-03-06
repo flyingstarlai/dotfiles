@@ -45,6 +45,7 @@ Plug 'bronson/vim-trailing-whitespace'
 Plug 'Raimondi/delimitMate'
 Plug 'majutsushi/tagbar'
 Plug 'scrooloose/syntastic'
+Plug 'flowtype/vim-flow'
 Plug 'Yggdroot/indentLine'
 Plug 'avelino/vim-bootstrap-updater'
 Plug 'sheerun/vim-polyglot'
@@ -101,6 +102,16 @@ Plug 'trkw/yarn.vim'
 " React code snippets
 Plug 'epilande/vim-react-snippets'
 
+" flow
+let g:flow#enable = 1
+"Use locally installed flow
+let local_flow = finddir('node_modules', '.;') . '/.bin/flow'
+if matchstr(local_flow, "^\/\\w") == ''
+  let local_flow= getcwd() . "/" . local_flow
+endif
+if executable(local_flow)
+  let g:flow#flowpath = local_flow
+endif
 "*****************************************************************************
 "*****************************************************************************
 

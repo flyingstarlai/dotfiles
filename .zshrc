@@ -99,4 +99,5 @@ source $ZSH/oh-my-zsh.sh
 # alias ohmyzsh="mate ~/.oh-my-zsh"
 export TERM=screen-256color
 export NVM_DIR="$HOME/.nvm"
+export PATH=~/.yarn/bin:$PATH
 [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"  # This loads nvm
